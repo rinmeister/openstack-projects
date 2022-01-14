@@ -24,12 +24,12 @@ print(pvars)
 role_member = conn.identity.find_role('Member')
 role_admin = conn.identity.find_role('Admin')
 
-#find ISM domain id
-ISM_domain = conn.identity.find_domain('ISM')
+#find domain id
+domain = conn.identity.find_domain(pvars['domain'])
 
 #The list of teachers is converted in an OS id list
 for teacher in pvars['teacherlist']:
-    pvars['teacherlist_ids'].append(conn.identity.find_user(teacher, domain_id=ISM_domain.id).id)
+    pvars['teacherlist_ids'].append(conn.identity.find_user(teacher, domain_id=domain.id).id)
 
 
 #We define a class for a student. The student has an OS id, a name which is 
@@ -47,7 +47,7 @@ def createProject():
     create = conn.identity.create_project(
             name='student-{}'.format(p1.name), 
             description=p1.email, 
-            domain_id=ISM_domain.id
+            domain_id=domain.id
             )
     assign = conn.identity.assign_project_role_to_user(
             create.id, 
@@ -64,6 +64,6 @@ def createProject():
 
 if __name__ == "__main__":
     for username in pvars['studentlist']:
-        student = conn.identity.find_user(username, domain_id=ISM_domain.id)
+        student = conn.identity.find_user(username, domain_id=domain.id)
         p1 = Student(student.id, student.name, student.email)
         createProject()
