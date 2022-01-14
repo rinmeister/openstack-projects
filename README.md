@@ -1,6 +1,6 @@
-# Een python script om in openstack projecten aan te maken. Je moet als admin
-kunnen aanmelden. Het script verwacht variabelen daarvoor in de environment
-of in de ~/.config/openstack/clouds.yaml.
+# Een python script om in openstack projecten aan te maken. 
+Je moet als admin kunnen aanmelden. Het script verwacht variabelen daarvoor 
+in de environment of in de ~/.config/openstack/clouds.yaml.
 
 Voorbeeld van een environment setup:
 export OS_AUTH_URL=http://1.2.3.4:5000/v3
