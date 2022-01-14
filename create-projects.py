@@ -16,7 +16,7 @@ conn = openstack.connect()
 #on in the script.
 
 #Load yaml file with project variables.
-with open(r'project-sea-sip.yaml') as file:
+with open(r'project-name.yaml') as file:
     pvars = yaml.load(file, Loader=yaml.FullLoader)
 print(pvars)
 
