@@ -27,3 +27,8 @@ van elk project admin moeten worden gemaakt om te kunnen troubleshooten.
 Als je een clone maakt definieer dan je eigen yaml variabelen file volgens 
 de example in de repository. Laad deze file dan in het script bij het
 'with open' statement.
+
+Het script maakt ook een statefile die alle projectIDs registreert die worden
+aangemaakt. Het is een unieke lijst. Deze lijst kan later als input worden
+gebruikt om alle aangemaakte projecten weer te verwijderen als de course is
+afgelopen.
