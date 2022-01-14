@@ -1,0 +1,15 @@
+###
+
+teacherlist_ids: []
+
+#Quotes are necessary because Python will interpret them as integers
+studentlist:
+  - 'username'
+
+teacherlist:
+  - teacher1
+  - teacher2
+  - teacher3
+  - teacher4
+  - teacher5
+
