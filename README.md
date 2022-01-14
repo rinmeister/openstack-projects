@@ -24,6 +24,6 @@ te zetten voor studenten. De studenten krijgen ieder een eigen project met
 hun eigen gebruikersnaam als projectnaam. Er is een lijst met docenten die
 van elk project admin moeten worden gemaakt om te kunnen troubleshooten.
 
-ALs je een clone maakt definieer dan je eigen yaml variabelen file volgens 
-de example in de repository. Laadt deze file dan in het script bij het
+Als je een clone maakt definieer dan je eigen yaml variabelen file volgens 
+de example in de repository. Laad deze file dan in het script bij het
 'with open' statement.
