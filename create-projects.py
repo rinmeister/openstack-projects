@@ -2,47 +2,64 @@
 
 import openstack
 import yaml
+import sys
 
 # Initialize and turn on debug logging
-#openstack.enable_logging(debug=True)
+# openstack.enable_logging(debug=True)
 
 # Initialize connection
 conn = openstack.connect()
 
-#declare and load fixed variables. Every student gets the 'Member' role.
-#All the teachers get the admin role so they can troubleshoot.
-#All variable are derived from a lookup using the OS API
-#Each variable is a dictionary. We use specific fields like ID further
-#on in the script.
+"""
+declare and load fixed variables. Every student gets the 'Member' role.
+All the teachers get the admin role so they can troubleshoot.
+All variable are derived from a lookup using the OS API
+Each variable is a dictionary. We use specific fields like ID further
+on in the script.
+"""
 
-#Load yaml file with project variables.
+# Load yaml file with project variables.
 with open(r'project-name.yaml') as file:
     pvars = yaml.load(file, Loader=yaml.FullLoader)
 
-#Find roles
+# load statefile
+with open(r'statefile.yaml') as statefile:
+    state = yaml.load(statefile, Loader=yaml.FullLoader)
+
+# Find roles
 role_member = conn.identity.find_role('Member')
 role_admin = conn.identity.find_role('Admin')
 
-#find domain id
+# find domain id
 domain = conn.identity.find_domain(pvars['domain'])
 
-#The list of teachers is converted in an OS id list
+# The list of teachers is converted in an OS id list
 for teacher in pvars['teacherlist']:
-    pvars['teacherlist_ids'].append(conn.identity.find_user(teacher, domain_id=domain.id).id)
+    pvars['teacherlist_ids'].append(
+            conn.identity.find_user(
+                teacher, 
+                domain_id=domain.id
+                ).id)
 
-
-#We define a class for a student. The student has an OS id, a name which is 
-#always the student number. Lastly the student has a mail address.
+# We define a class for a student. The student has an OS id and a name which is 
+# always the student number. Lastly the student has a mail address.
 class Student:
     def __init__(self, Id, name, email):
         self.Id = Id
         self.name = name
         self.email = email
 
-#In this function a project is created for the student and serveral role are
-#assigned to the project. The student is a member of this project. All teachers
-#are added as admins.
+"""
+In the next function a project is created for the student and two roles
+are assigned to the project. The student is a member of this project. All 
+teachers are added as admins.
+"""
 def createProject():
+    #check if the project already exists
+    is_project = conn.identity.find_project('student-{}'.format(p1.name))
+    if is_project:
+        print('project bestaat al')
+        return
     create = conn.identity.create_project(
             name='student-{}'.format(p1.name), 
             description=p1.email, 
@@ -59,7 +76,25 @@ def createProject():
                 assign_teacher, 
                 role_admin.id
                 )
-    print("created project {} successfully".format(create.name))
+    print("created project {} with id {} successfully".format(
+        create.name,
+        create.id
+        ))
+
+    """
+    write to statefile. Statefile is helpful to delete all students 
+    projects after the course has finished.
+    """
+    # turn studentlist into set
+    pid = set(state['projectIDs'])
+
+    # add new project ID to the set and convert back to list
+    pid.add(create.id)
+    state['projectIDs']=list(pid)
+
+    # write list to statefile
+    with open(r'statefile.yaml', 'w') as file:
+        document = yaml.dump(state, file)
 
 if __name__ == "__main__":
     for username in pvars['studentlist']:
