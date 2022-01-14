@@ -18,7 +18,6 @@ conn = openstack.connect()
 #Load yaml file with project variables.
 with open(r'project-name.yaml') as file:
     pvars = yaml.load(file, Loader=yaml.FullLoader)
-print(pvars)
 
 #Find roles
 role_member = conn.identity.find_role('Member')
