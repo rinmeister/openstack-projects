@@ -32,6 +32,8 @@ role_admin = conn.identity.find_role('Admin')
 
 # find domain id
 domain = conn.identity.find_domain(pvars['domain'])
+# find SEA network domain
+network = conn.network.find_network(pvars['network'])
 
 # The list of teachers is converted in an OS id list
 for teacher in pvars['teacherlist']:
@@ -80,17 +82,33 @@ def createProject():
         create.name,
         create.id
         ))
+    # create LB ports in SEA network
+    for port in pvars['portFunction']:
+        #check if port already exists
+        is_port = conn.network.find_port('SIP_LB_{}_{}'.format(port,username))
+        if is_port:
+            print("port bestaat al")
+            continue
+        create_LB = conn.network.create_port(
+            name = 'SIP_LB_{}_{}'.format(port,username),
+            network_id = network.id,
+            project_id = create.id)
+        print("created port {} successfully".format(create_LB.name))
+        #Add port id to statefile portlist
+        state['portIDs'].append(create_LB.id)
 
     """
     write to statefile. Statefile is helpful to delete all students 
     projects after the course has finished.
     """
-    # turn studentlist into set
+    # turn studentlist and portlist into sets
     pid = set(state['projectIDs'])
+    portid = set(state['portIDs'])
 
-    # add new project ID to the set and convert back to list
+    # add new project ID and port ID to the sets and convert back to lists
     pid.add(create.id)
     state['projectIDs']=list(pid)
+    state['portIDs']=list(portid)
 
     # write list to statefile
     with open(r'statefile.yaml', 'w') as file:
